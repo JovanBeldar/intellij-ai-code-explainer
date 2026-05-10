@@ -16,4 +16,15 @@
         <toolWindow factoryClass="com.github.jovanbeldar.intellijaicodeexplainer.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
         <postStartupActivity implementation="com.github.jovanbeldar.intellijaicodeexplainer.startup.MyProjectActivity" />
     </extensions>
+
+    <actions>
+        <action
+                id="HelloWorldAction"
+                class="com.github.jovanbeldar.intellijaicodeexplainer.actions.HelloWorldAction"
+                text="Hello World"
+                description="Shows Hello World popup"
+        >
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
