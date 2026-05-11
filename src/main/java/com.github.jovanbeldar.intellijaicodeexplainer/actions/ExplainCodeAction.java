@@ -1,5 +1,6 @@
 package com.github.jovanbeldar.intellijaicodeexplainer.actions;
 
+import com.github.jovanbeldar.intellijaicodeexplainer.services.PromptBuilder;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -20,7 +21,8 @@ public class ExplainCodeAction extends AnAction {
         if(selectedText == null || selectedText.isEmpty()) {
             return;
         }
-        System.out.println(selectedText);
+        String prompt = PromptBuilder.buildExplanationPrompt(selectedText);
+        System.out.println(prompt);
     }
 
     @Override
