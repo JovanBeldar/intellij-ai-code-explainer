@@ -24,7 +24,15 @@
                 text="Hello World"
                 description="Shows Hello World popup"
         >
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+        <action
+                id="ExplainCodeAction"
+                class="com.github.jovanbeldar.intellijaicodeexplainer.actions.ExplainCodeAction"
+                text="Explain Code"
+                description="Shows selected code explanation popup using AI"
+        >
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
     </actions>
 </idea-plugin>
