@@ -9,5 +9,15 @@ public class HelloWorldAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         Messages.showMessageDialog("Hello from my plugin!", "Hello", Messages.getInformationIcon());
+        /*ObjectMapper mapper = new ObjectMapper();
+        Message message = new Message("user", "explain this code");
+        ChatRequest request = new ChatRequest("gpt-4.1-mini", List.of(message));
+        try {
+            String json = mapper.writeValueAsString(request);
+            System.out.println(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }*/
+        System.out.println(System.getenv("OPENAI_API_KEY"));
     }
 }
