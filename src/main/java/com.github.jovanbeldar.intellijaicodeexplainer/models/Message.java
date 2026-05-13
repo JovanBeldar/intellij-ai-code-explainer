@@ -1,5 +1,8 @@
-package com.github.jovanbeldar.intellijaicodeexplainer.model;
+package com.github.jovanbeldar.intellijaicodeexplainer.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
     private String role;
     private String content;

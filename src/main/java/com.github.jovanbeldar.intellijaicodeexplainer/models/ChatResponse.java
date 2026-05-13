@@ -1,7 +1,10 @@
-package com.github.jovanbeldar.intellijaicodeexplainer.model;
+package com.github.jovanbeldar.intellijaicodeexplainer.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatResponse {
     private List<Choice> choices;
 

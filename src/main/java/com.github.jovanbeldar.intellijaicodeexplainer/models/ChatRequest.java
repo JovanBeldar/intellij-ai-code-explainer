@@ -1,4 +1,4 @@
-package com.github.jovanbeldar.intellijaicodeexplainer.model;
+package com.github.jovanbeldar.intellijaicodeexplainer.models;
 
 import java.util.List;
 

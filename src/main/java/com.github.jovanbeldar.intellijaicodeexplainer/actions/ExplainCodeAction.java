@@ -14,17 +14,20 @@ public class ExplainCodeAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         Editor editor = anActionEvent.getData(CommonDataKeys.EDITOR);
-//        Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
         if(editor == null) {
             return;
         }
+
         SelectionModel selectionModel = editor.getSelectionModel();
         String selectedText = selectionModel.getSelectedText();
         if(selectedText == null || selectedText.isEmpty()) {
             return;
         }
+
         String prompt = PromptBuilder.buildExplanationPrompt(selectedText);
+
         String explanation = AiService.explainCode(prompt);
+
         Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
     }
 
