@@ -2,6 +2,7 @@ package com.github.jovanbeldar.intellijaicodeexplainer.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jovanbeldar.intellijaicodeexplainer.exceptions.AiServiceException;
 import com.github.jovanbeldar.intellijaicodeexplainer.models.*;
 
 import java.io.IOException;
@@ -20,11 +21,11 @@ public class AiService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
-    private static String getApiKey() {
+    private static String getApiKey() throws AiServiceException {
         String apiKey = System.getenv(API_KEY_ENV);
 
         if(apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is missing.");
+            throw new AiServiceException("OPENAI_API_KEY environment variable is missing.");
         }
 
         return apiKey;
@@ -35,15 +36,28 @@ public class AiService {
         return new ChatRequest(MODEL, List.of(message));
     }
 
-    private static String extractExplanation(ChatResponse response) {
+    private static void checkResponse(HttpResponse<String> response) throws AiServiceException {
+        switch (response.statusCode()) {
+            case 401:
+                throw new AiServiceException("Invalid API key.");
+            case 429:
+                throw new AiServiceException("Rate limit exceeded.");
+            case 500:
+                throw new AiServiceException("OpenAI server error.");
+            default:
+                throw new AiServiceException("Unexpected API error: " + response.statusCode());
+        }
+    }
+
+    private static String extractExplanation(ChatResponse response) throws AiServiceException {
         if(response.getChoices() == null || response.getChoices().isEmpty()) {
-            throw new IllegalStateException("No AI response received");
+            throw new AiServiceException("No explanation returned from AI.");
         }
 
         return response.getChoices().getFirst().getMessage().getContent();
     }
 
-    public static String explainCode(String prompt) {
+    public static String explainCode(String prompt) throws AiServiceException {
         String apiKey = getApiKey();
 
         ChatRequest chatRequest = createRequest(prompt);
@@ -61,7 +75,7 @@ public class AiService {
             HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
             if(response.statusCode() != 200) {
-                throw new IllegalStateException("OpenAI API request failed: " + response.body());
+                checkResponse(response);
             }
 
             ChatResponse chatResponse = MAPPER.readValue(response.body(), ChatResponse.class);
@@ -69,9 +83,17 @@ public class AiService {
             return extractExplanation(chatResponse);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize OpenAI request.", e);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+
+            throw new AiServiceException("Failed to process AI response.", e);
+
+        } catch (IOException e) {
+
+            throw new AiServiceException("Network error while contacting OpenAI.", e);
+
+        } catch(InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+            throw new AiServiceException("Request was interrupted.", e);
         }
     }
 }

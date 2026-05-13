@@ -1,5 +1,6 @@
 package com.github.jovanbeldar.intellijaicodeexplainer.actions;
 
+import com.github.jovanbeldar.intellijaicodeexplainer.exceptions.AiServiceException;
 import com.github.jovanbeldar.intellijaicodeexplainer.services.AiService;
 import com.github.jovanbeldar.intellijaicodeexplainer.services.PromptBuilder;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -20,15 +21,24 @@ public class ExplainCodeAction extends AnAction {
 
         SelectionModel selectionModel = editor.getSelectionModel();
         String selectedText = selectionModel.getSelectedText();
-        if(selectedText == null || selectedText.isEmpty()) {
+        if(selectedText == null || selectedText.isBlank()) {
             return;
         }
 
         String prompt = PromptBuilder.buildExplanationPrompt(selectedText);
 
-        String explanation = AiService.explainCode(prompt);
+        try {
 
-        Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
+            String explanation = AiService.explainCode(prompt);
+
+            Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
+        } catch (AiServiceException e) {
+            Messages.showErrorDialog(e.getMessage(), "AI Error");
+        } catch (Exception e) {
+            Messages.showErrorDialog("Unexpected error occurred.", "AI Error");
+        }
+
+
     }
 
     @Override
