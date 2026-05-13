@@ -6,6 +6,7 @@ import com.github.jovanbeldar.intellijaicodeexplainer.services.PromptBuilder;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.ui.Messages;
@@ -27,26 +28,32 @@ public class ExplainCodeAction extends AnAction {
 
         String prompt = PromptBuilder.buildExplanationPrompt(selectedText);
 
-        try {
+        ApplicationManager.getApplication().executeOnPooledThread(()->{
 
-            String explanation = AiService.explainCode(prompt);
+            try {
+                String explanation = AiService.explainCode(prompt);
+                ApplicationManager.getApplication().invokeLater(()->{
+                    Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
+                });
 
-            Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
-        } catch (AiServiceException e) {
-            Messages.showErrorDialog(e.getMessage(), "AI Error");
-        } catch (Exception e) {
-            Messages.showErrorDialog("Unexpected error occurred.", "AI Error");
-        }
+            } catch (AiServiceException e) {
+                ApplicationManager.getApplication().invokeLater(()->{
+                    Messages.showErrorDialog(e.getMessage(), "AI Error");
+                });
 
+            } catch (Exception e) {
+                ApplicationManager.getApplication().invokeLater(()->{
+                    Messages.showErrorDialog("Unexpected error occurred.", "AI Error");
+                });
 
+            }
+        });
     }
 
     @Override
     public void update(AnActionEvent e) {
         Editor editor = e.getData(CommonDataKeys.EDITOR);
-
         boolean enabled = editor != null && editor.getSelectionModel().hasSelection();
-
         e.getPresentation().setEnabledAndVisible(enabled);
     }
 }
