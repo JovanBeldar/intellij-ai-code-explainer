@@ -3,7 +3,9 @@ package com.github.jovanbeldar.intellijaicodeexplainer.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jovanbeldar.intellijaicodeexplainer.exceptions.AiServiceException;
-import com.github.jovanbeldar.intellijaicodeexplainer.models.*;
+import com.github.jovanbeldar.intellijaicodeexplainer.models.ChatRequest;
+import com.github.jovanbeldar.intellijaicodeexplainer.models.Message;
+import com.github.jovanbeldar.intellijaicodeexplainer.models.ChatResponse;
 
 import java.io.IOException;
 import java.net.URI;
