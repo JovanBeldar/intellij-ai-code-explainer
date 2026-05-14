@@ -1,45 +1,59 @@
-# intellij-ai-code-explainer
+# IntelliJ AI Code Explainer
 
-![Build](https://github.com/JovanBeldar/intellij-ai-code-explainer/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+An IntelliJ IDEA plugin that provides AI-generated explanations for selected code using the OpenAI API.
+Users can select code in the editor, open the context menu, and choose "Explain Code" to receive a natural language explanation directly inside the IDE.
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [group](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml), [name](./src/main/resources/META-INF/plugin.xml), and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin [description](./src/main/resources/META-INF/plugin.xml) (see [Tips][docs:plugin-description]) and this README to describe what your plugin does.
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
+## Features
 
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+* Explain selected code using OpenAI
+* Accessible from the editor popup menu
+* Background task execution to avoid UI freezing
+* Error handling for API/network failures
+* JSON serialization/deserialization using Jackson
 
-## Installation
+## Technologies Used
 
-- Using the IDE built-in plugin system:
+* Java
+* IntelliJ Platform SDK
+* OpenAI API
+* Jackson
+* Gradle
+* Java HttpClient
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "intellij-ai-code-explainer"</kbd> >
-  <kbd>Install</kbd>
+## How It Works
 
-- Using JetBrains Marketplace:
+1. User selects text in the editor
+2. User clicks on "Explain code" option in editor context menu 
+3. Plugin creates an AI prompt 
+4. Request is sent to the OpenAI API 
+5. Response is deserialized using Jackson 
+6. Generated code explanation is displayed in a popup dialog
 
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
+## Setup
 
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+1. Clone the repository
+2. Set the `OPENAI_API_KEY` environment variable
+3. Run the plugin using the IntelliJ Plugin Dev configuration
 
-- Manually:
+## Usage
 
-  Download the [latest release](https://github.com/JovanBeldar/intellij-ai-code-explainer/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+1. Open a project in IntelliJ IDEA
+2. Select a piece of code
+3. Right-click to open editor context menu
+4. Click on option "Explain Code"
+5. Wait for an AI-generated explanation
 
+## Project Structure
 
----
-Plugin based on the [IntelliJ Platform Plugin Template][template].
+```text
+actions/        -> IntelliJ plugin actions
+exceptions/     -> Custom exception handling
+models/         -> API request/response models
+services/       -> OpenAI communication and prompt building
+```
 
-[template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+![context-menu](images/context-menu.png)
+
+![loading-indicator](images/loading-indicator.png)
+
+![explanation-dialog](images/explanation-dialog.png)
