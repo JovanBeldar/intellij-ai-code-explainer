@@ -9,14 +9,18 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 
 public class ExplainCodeAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+        Project project = anActionEvent.getProject();
         Editor editor = anActionEvent.getData(CommonDataKeys.EDITOR);
-        if(editor == null) {
+        if(editor == null || project == null) {
             return;
         }
 
@@ -28,26 +32,30 @@ public class ExplainCodeAction extends AnAction {
 
         String prompt = PromptBuilder.buildExplanationPrompt(selectedText);
 
-        ApplicationManager.getApplication().executeOnPooledThread(()->{
+        new Task.Backgroundable(project, "Explaining code...", false) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                try {
+                    indicator.setText("Sending request to OpenAI...");
 
-            try {
-                String explanation = AiService.explainCode(prompt);
-                ApplicationManager.getApplication().invokeLater(()->{
-                    Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
-                });
+                    String explanation = AiService.explainCode(prompt);
 
-            } catch (AiServiceException e) {
-                ApplicationManager.getApplication().invokeLater(()->{
-                    Messages.showErrorDialog(e.getMessage(), "AI Error");
-                });
+                    indicator.setText("Preparing explanation...");
 
-            } catch (Exception e) {
-                ApplicationManager.getApplication().invokeLater(()->{
-                    Messages.showErrorDialog("Unexpected error occurred.", "AI Error");
-                });
-
+                    ApplicationManager.getApplication().invokeLater(()->{
+                        Messages.showMessageDialog(explanation, "AI Code Explanation", Messages.getInformationIcon());
+                    });
+                } catch (AiServiceException e) {
+                    ApplicationManager.getApplication().invokeLater(()->{
+                        Messages.showErrorDialog(e.getMessage(), "AI Error");
+                    });
+                } catch (Exception e) {
+                    ApplicationManager.getApplication().invokeLater(()->{
+                        Messages.showErrorDialog("Unexpected error occurred.", "AI Error");
+                    });
+                }
             }
-        });
+        }.queue();
     }
 
     @Override
